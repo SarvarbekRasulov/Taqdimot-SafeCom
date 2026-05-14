@@ -1,0 +1,466 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SafeCom — Xavfsiz Qidiruv Tizimi | Apex IV</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#030711;--bg2:#060d1c;--bg3:#09152a;
+  --accent:#38bdf8;--accent2:#0ea5e9;--accent3:#6366f1;
+  --green:#22d3a3;--red:#f43f5e;--amber:#f59e0b;
+  --text:#e2efff;--muted:#64829e;
+  --border:rgba(56,189,248,0.1);--border2:rgba(56,189,248,0.22);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;font-size:16px;line-height:1.7;overflow-x:hidden;}
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;}
+
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:1.1rem 4rem;background:rgba(3,7,17,0.82);backdrop-filter:blur(20px);border-bottom:0.5px solid var(--border);}
+.nav-brand{display:flex;align-items:center;gap:10px;font-family:'Syne',sans-serif;font-weight:800;font-size:1.2rem;letter-spacing:-0.02em;color:var(--accent);text-decoration:none;}
+.nav-icon{width:34px;height:34px;border-radius:9px;background:linear-gradient(135deg,#0ea5e9,#38bdf8);display:flex;align-items:center;justify-content:center;font-size:17px;}
+.nav-links{display:flex;gap:2.5rem;list-style:none;}
+.nav-links a{color:var(--muted);text-decoration:none;font-size:14px;transition:color .25s;}
+.nav-links a:hover{color:var(--accent);}
+.nav-cta{background:var(--accent2);color:#fff;border:none;padding:9px 22px;border-radius:9px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .25s;text-decoration:none;display:inline-block;}
+.nav-cta:hover{background:var(--accent);color:var(--bg);transform:translateY(-1px);}
+
+/* HERO */
+.hero{min-height:100vh;position:relative;z-index:1;display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:9rem 2rem 5rem;}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:rgba(56,189,248,0.08);border:0.5px solid rgba(56,189,248,0.28);color:var(--accent);padding:7px 18px;border-radius:100px;font-size:13px;margin-bottom:2rem;animation:fadeUp .8s ease both;}
+.blink{width:7px;height:7px;border-radius:50%;background:var(--green);animation:blink 2s infinite;}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.2}}
+.hero h1{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(3rem,7vw,5.5rem);line-height:1.04;letter-spacing:-.03em;margin-bottom:.4rem;animation:fadeUp .8s .1s ease both;}
+.hero h1 span{background:linear-gradient(135deg,var(--accent2),var(--accent),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+.hero-sub{font-size:clamp(1rem,2vw,1.15rem);color:var(--muted);font-weight:300;max-width:580px;margin:1.2rem auto 2.5rem;animation:fadeUp .8s .2s ease both;}
+.hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;animation:fadeUp .8s .3s ease both;}
+.btn-main{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--accent2),var(--accent3));color:#fff;border:none;padding:14px 32px;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:500;cursor:pointer;transition:all .3s;text-decoration:none;box-shadow:0 0 30px rgba(14,165,233,.3);}
+.btn-main:hover{transform:translateY(-3px);box-shadow:0 8px 40px rgba(14,165,233,.45);}
+.btn-outline{display:inline-flex;align-items:center;gap:8px;background:transparent;color:var(--accent);border:0.5px solid var(--border2);padding:14px 28px;border-radius:12px;font-family:'DM Sans',sans-serif;font-size:15px;font-weight:400;cursor:pointer;transition:all .25s;text-decoration:none;}
+.btn-outline:hover{background:rgba(56,189,248,.06);border-color:var(--accent);}
+.hero-stats{display:flex;gap:3rem;justify-content:center;margin-top:3.5rem;animation:fadeUp .8s .45s ease both;}
+.hero-stat{text-align:center;}
+.hero-stat .num{font-family:'Syne',sans-serif;font-size:1.9rem;font-weight:700;color:var(--accent);}
+.hero-stat .lbl{font-size:13px;color:var(--muted);}
+.search-mockup{margin-top:4rem;max-width:620px;width:100%;background:var(--bg2);border:0.5px solid var(--border2);border-radius:16px;padding:1.2rem 1.5rem;animation:fadeUp .8s .55s ease both;box-shadow:0 0 60px rgba(14,165,233,.07);}
+.search-bar{display:flex;align-items:center;gap:12px;background:var(--bg3);border:0.5px solid var(--border);border-radius:10px;padding:10px 16px;}
+.search-fake{flex:1;color:var(--text);font-size:14px;opacity:.85;}
+.shield-badge{display:flex;align-items:center;gap:5px;background:rgba(34,211,163,.12);border:0.5px solid rgba(34,211,163,.3);color:var(--green);padding:4px 10px;border-radius:6px;font-size:12px;}
+.search-tags{display:flex;gap:8px;margin-top:12px;flex-wrap:wrap;}
+.tag{font-size:12px;padding:4px 12px;border-radius:100px;border:0.5px solid var(--border);color:var(--muted);}
+.tag.blocked{border-color:rgba(244,63,94,.3);color:var(--red);background:rgba(244,63,94,.06);}
+.tag.safe{border-color:rgba(34,211,163,.3);color:var(--green);background:rgba(34,211,163,.06);}
+
+/* SECTIONS */
+section{position:relative;z-index:1;}
+.section-wrap{max-width:1100px;margin:0 auto;padding:6rem 2rem;}
+.section-label{font-size:12px;font-weight:500;letter-spacing:.12em;text-transform:uppercase;color:var(--accent);margin-bottom:.8rem;}
+.section-title{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2rem,4vw,3rem);letter-spacing:-.025em;line-height:1.1;margin-bottom:1rem;}
+.section-desc{color:var(--muted);max-width:520px;font-size:15px;line-height:1.75;}
+.divider{width:100%;height:0.5px;background:linear-gradient(90deg,transparent,var(--border2),transparent);}
+
+/* FEATURES */
+.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:1.5rem;margin-top:3.5rem;}
+.feat-card{background:var(--bg2);border:0.5px solid var(--border);border-radius:18px;padding:2rem;transition:all .3s;position:relative;overflow:hidden;}
+.feat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--accent2),transparent);opacity:0;transition:opacity .3s;}
+.feat-card:hover{border-color:var(--border2);transform:translateY(-4px);}
+.feat-card:hover::before{opacity:1;}
+.feat-icon{width:48px;height:48px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:1.2rem;}
+.feat-card h3{font-family:'Syne',sans-serif;font-weight:700;font-size:1.05rem;margin-bottom:.5rem;letter-spacing:-.01em;}
+.feat-card p{color:var(--muted);font-size:14px;line-height:1.75;}
+.feat-num{position:absolute;top:1.5rem;right:1.5rem;font-family:'Syne',sans-serif;font-weight:800;font-size:2.5rem;color:rgba(255,255,255,.03);line-height:1;}
+
+/* BIG CENTER CTA */
+.center-cta{text-align:center;padding:6rem 2rem;position:relative;z-index:1;}
+.center-cta-glow{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:350px;background:radial-gradient(ellipse,rgba(14,165,233,.18) 0%,transparent 65%);pointer-events:none;}
+.center-cta h2{font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2rem,4.5vw,3.4rem);letter-spacing:-.03em;line-height:1.1;margin-bottom:1rem;}
+.center-cta p{color:var(--muted);font-size:16px;max-width:460px;margin:0 auto 2.5rem;}
+.btn-hero-big{display:inline-flex;align-items:center;gap:12px;background:linear-gradient(135deg,#0ea5e9 0%,#38bdf8 50%,#22d3a3 100%);color:#fff;border:none;padding:18px 48px;border-radius:16px;font-family:'Syne',sans-serif;font-size:1.1rem;font-weight:700;cursor:pointer;transition:all .35s;text-decoration:none;box-shadow:0 0 50px rgba(14,165,233,.4),0 4px 20px rgba(0,0,0,.4);letter-spacing:-.01em;position:relative;overflow:hidden;}
+.btn-hero-big:hover{transform:translateY(-4px) scale(1.02);box-shadow:0 0 90px rgba(14,165,233,.65),0 8px 40px rgba(0,0,0,.4);}
+.btn-hero-big .arr{font-size:1.2em;transition:transform .3s;display:inline-block;}
+.btn-hero-big:hover .arr{transform:translateX(5px);}
+
+/* HOW */
+.how-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1rem;margin-top:3.5rem;}
+.how-step{background:var(--bg2);border:0.5px solid var(--border);border-radius:16px;padding:1.8rem;transition:border-color .3s;}
+.how-step:hover{border-color:var(--border2);}
+.step-num{font-family:'Syne',sans-serif;font-weight:800;font-size:2.5rem;color:var(--accent2);opacity:.22;line-height:1;margin-bottom:.5rem;}
+.how-step h4{font-family:'Syne',sans-serif;font-weight:700;font-size:.95rem;margin-bottom:.4rem;}
+.how-step p{color:var(--muted);font-size:13px;line-height:1.65;}
+
+/* SCORING */
+.score-section{background:var(--bg2);}
+.score-wrap{max-width:1100px;margin:0 auto;padding:6rem 2rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;}
+.score-card{background:var(--bg3);border:0.5px solid var(--border);border-radius:20px;padding:2rem;}
+.score-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;}
+.score-title{font-family:'Syne',sans-serif;font-weight:700;font-size:.9rem;}
+.score-badge{font-size:11px;padding:4px 10px;border-radius:100px;font-weight:500;}
+.sb-high{background:rgba(34,211,163,.12);color:var(--green);border:0.5px solid rgba(34,211,163,.3);}
+.score-big{font-family:'Syne',sans-serif;font-weight:800;font-size:4rem;letter-spacing:-.04em;line-height:1;}
+.score-lbl{font-size:12px;color:var(--muted);margin-bottom:1.5rem;}
+.score-bar-wrap{margin:.8rem 0;}
+.score-bar-label{display:flex;justify-content:space-between;font-size:12px;color:var(--muted);margin-bottom:4px;}
+.score-bar{height:6px;background:rgba(255,255,255,.06);border-radius:100px;overflow:hidden;}
+.score-bar-fill{height:100%;border-radius:100px;}
+.fill-green{background:linear-gradient(90deg,#22d3a3,#38bdf8);}
+.fill-amber{background:linear-gradient(90deg,#f59e0b,#f97316);}
+.fill-red{background:linear-gradient(90deg,#f43f5e,#f97316);}
+.score-tiers{margin-top:2rem;display:flex;flex-direction:column;gap:1rem;}
+.score-tier{display:flex;align-items:flex-start;gap:1rem;background:var(--bg2);border:0.5px solid var(--border);border-radius:14px;padding:1.2rem;}
+.tier-icon{font-size:1.4rem;flex-shrink:0;margin-top:2px;}
+.tier-body h5{font-family:'Syne',sans-serif;font-weight:700;font-size:.88rem;margin-bottom:.25rem;}
+.tier-body p{font-size:13px;color:var(--muted);line-height:1.55;}
+
+/* BLOCKED */
+.blocked-wrap{max-width:1100px;margin:0 auto;padding:6rem 2rem;display:grid;grid-template-columns:1fr 1fr;gap:4rem;align-items:center;}
+.block-pills{display:flex;flex-wrap:wrap;gap:8px;margin-top:.8rem;}
+.block-pill{display:flex;align-items:center;gap:6px;background:var(--bg2);border:0.5px solid var(--border);border-radius:100px;padding:7px 14px;font-size:13px;color:var(--muted);transition:all .25s;}
+.block-pill:hover{border-color:rgba(244,63,94,.4);color:var(--red);}
+.bdot{width:6px;height:6px;border-radius:50%;background:var(--red);flex-shrink:0;}
+.safe-pill:hover{border-color:rgba(34,211,163,.4);color:var(--green);}
+.gdot{width:6px;height:6px;border-radius:50%;background:var(--green);flex-shrink:0;}
+
+/* FOOTER */
+footer{position:relative;z-index:1;border-top:0.5px solid var(--border);padding:3rem 4rem;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:1rem;}
+.footer-brand{font-family:'Syne',sans-serif;font-weight:800;font-size:1.1rem;color:var(--accent);}
+.footer-by{font-size:13px;color:var(--muted);}
+.footer-by span{color:var(--accent3);font-weight:500;}
+
+/* ANIMATIONS */
+@keyframes fadeUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+.reveal{opacity:0;transform:translateY(28px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+
+@media(max-width:800px){
+  nav{padding:1rem 1.5rem;}
+  .nav-links{display:none;}
+  .score-wrap,.blocked-wrap{grid-template-columns:1fr;gap:2rem;}
+  .hero-stats{gap:1.5rem;flex-wrap:wrap;}
+  footer{padding:2rem 1.5rem;flex-direction:column;text-align:center;}
+}
+</style>
+</head>
+<body>
+<canvas id="bg-canvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <a class="nav-brand" href="#">
+    <div class="nav-icon">🛡️</div>
+    SafeCom
+  </a>
+  <ul class="nav-links">
+    <li><a href="#features">Funksiyalar</a></li>
+    <li><a href="#how">Ishlash tartibi</a></li>
+    <li><a href="#scoring">Ball tizimi</a></li>
+    <li><a href="#blocked">Himoya</a></li>
+  </ul>
+  <a href="https://redornx0-dotcom.github.io/SafeNet-Ma-lumot/#features" target="_blank" class="nav-cta">Saytni ochish →</a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-badge"><span class="blink"></span> Apex IV tomonidan ishlab chiqilgan</div>
+  <h1>Internet<br><span>Xavfsiz bo'lsin</span></h1>
+  <p class="hero-sub">SafeCom — pornografiya, zararli qimor va tavakkalchi o'yinlardan himoya qiluvchi aqlli qidiruv tizimi. Har bir foydalanuvchi uchun kuzatuv va ball tizimi mavjud.</p>
+  <div class="hero-btns">
+    <a href="https://redornx0-dotcom.github.io/SafeNet-Ma-lumot/#features" target="_blank" class="btn-main">🌐 Saytimizga kirish →</a>
+    <a href="#features" class="btn-outline">Batafsil o'qish ↓</a>
+  </div>
+  <div class="hero-stats">
+    <div class="hero-stat"><div class="num">99.8%</div><div class="lbl">Bloklash aniqligi</div></div>
+    <div class="hero-stat"><div class="num">5</div><div class="lbl">Asosiy funksiya</div></div>
+    <div class="hero-stat"><div class="num">50K+</div><div class="lbl">Bloklangan domen</div></div>
+    <div class="hero-stat"><div class="num">7/24</div><div class="lbl">Kuzatuv tizimi</div></div>
+  </div>
+  <div class="search-mockup">
+    <div class="search-bar">
+      <span style="font-size:18px;color:var(--muted)">🔍</span>
+      <div class="search-fake">Xavfsiz qidiruv amalga oshirilmoqda...</div>
+      <div class="shield-badge">🛡️ Himoyalangan</div>
+    </div>
+    <div class="search-tags">
+      <div class="tag safe">✓ Toza kontent</div>
+      <div class="tag safe">✓ Oila uchun xavfsiz</div>
+      <div class="tag blocked">✗ Pornografiya bloklandi</div>
+      <div class="tag blocked">✗ Qimor saytlari bloklandi</div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="section-wrap">
+    <div class="section-label">Asosiy funksiyalar</div>
+    <h2 class="section-title">5 ta muhim<br>xususiyat</h2>
+    <p class="section-desc">SafeCom faqat bloklash emas — to'liq xavfsizlik ekotizimi. Quyidagi 5 ta kuchli funksiya sizni va oilangizni himoya qiladi.</p>
+    <div class="features-grid">
+
+      <div class="feat-card reveal">
+        <span class="feat-num">01</span>
+        <div class="feat-icon" style="background:rgba(14,165,233,.12)">🔍</div>
+        <h3>Shaxsiy Qidiruv Tizimi</h3>
+        <p>SafeCom o'zining mustaqil qidiruv dvigateli bilan jihozlangan. Google yoki Bing kabi tashqi tizimlarga bog'liq emas. Har bir so'rov ichki filtr va AI klassifikatori orqali o'tadi — natijalar faqat xavfsiz va verifikatsiyalangan manbalardan keladi. Real-time kontent tahlili orqali ishlaydi.</p>
+      </div>
+
+      <div class="feat-card reveal">
+        <span class="feat-num">02</span>
+        <div class="feat-icon" style="background:rgba(244,63,94,.1)">🚫</div>
+        <h3>Pornografiyaga Qarshi Filtr</h3>
+        <p>Neyron tarmoq asosida ishlaydigan kontent klassifikatori 18+ materiallarni avtomatik aniqlaydi va bloklaydi. Matn, rasm va URL manzillar darajasida ishlaydi. Yangi saytlar ham real-time skanerdan o'tkaziladi. Bu filterni foydalanuvchi o'chira olmaydi — faqat administrator huquqi bilan o'zgartiriladi.</p>
+      </div>
+
+      <div class="feat-card reveal">
+        <span class="feat-num">03</span>
+        <div class="feat-icon" style="background:rgba(245,158,11,.1)">🎰</div>
+        <h3>Qimor va Tavakkalchi O'yinlar Himoyasi</h3>
+        <p>Onlayn kazino, sport stavkalari, kripto ruletkasi va tavakkalchi o'yinlar saytlari avtomatik aniqlanadi va bloklanadi. 50,000+ dan ortiq qimor domenlarini o'z ichiga oluvchi ma'lumotlar bazasi har hafta yangilanadi. Yangi domenlar paydo bo'lganda AI ularni darhol aniqlaydi.</p>
+      </div>
+
+      <div class="feat-card reveal">
+        <span class="feat-num">04</span>
+        <div class="feat-icon" style="background:rgba(34,211,163,.1)">⭐</div>
+        <h3>Foydalanuvchi Ball Tizimi</h3>
+        <p>Har bir foydalanuvchi SafeCom'da 1000 ball bilan boshlaydi. Xavfsiz saytlarga kirish va ta'lim materiallarini o'qish ballni oshiradi. Shubhali saytlarga kirish urinishi esa ballni kamaytiradi. Ball tizimi oilaviy rejimda ota-onalarga hisobot tarzida avtomatik jo'natiladi.</p>
+      </div>
+
+      <div class="feat-card reveal">
+        <span class="feat-num">05</span>
+        <div class="feat-icon" style="background:rgba(99,102,241,.12)">📊</div>
+        <h3>Tahlil va Hisobot Paneli</h3>
+        <p>Tizim administratori uchun keng qamrovli dashboard: kim qanday sayt ochmoqchi bo'lgan, qachon bloklangan, ball tarixi batafsil ko'rsatiladi. Oilaviy rejimda ota-onalar farzandining internet faoliyatini real-time kuzatishi mumkin. Haftalik va oylik PDF hisobotlar avtomatik tayyorlanadi.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- BIG CTA -->
+<div class="center-cta" id="visit">
+  <div class="center-cta-glow"></div>
+  <div style="position:relative;z-index:1;max-width:700px;margin:0 auto;">
+    <div class="section-label" style="text-align:center">Jonli demo</div>
+    <h2 class="center-cta" style="padding:0;margin-bottom:1rem;">SafeCom'ni<br>hoziroq sinab ko'ring</h2>
+    <p style="color:var(--muted);font-size:16px;max-width:460px;margin:0 auto 2.5rem;">To'liq funksional saytimizga kiring va SafeCom'ning barcha imkoniyatlarini o'z ko'zingiz bilan ko'ring.</p>
+    <a href="https://redornx0-dotcom.github.io/SafeNet-Ma-lumot/#features" target="_blank" class="btn-hero-big">
+      🌐 Bizning saytimiz <span class="arr">→</span>
+    </a>
+    <div style="margin-top:1.2rem;font-size:13px;color:var(--muted)">redornx0-dotcom.github.io/SafeNet-Ma-lumot</div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- HOW IT WORKS -->
+<section id="how">
+  <div class="section-wrap">
+    <div class="section-label">Ishlash tartibi</div>
+    <h2 class="section-title">Qanday ishlaydi?</h2>
+    <p class="section-desc">SafeCom har bir so'rovni 4 bosqichli tekshiruvdan o'tkazib, faqat xavfsiz natijalarni ko'rsatadi.</p>
+    <div class="how-grid">
+      <div class="how-step reveal">
+        <div class="step-num">01</div>
+        <h4>Foydalanuvchi so'rov kiritadi</h4>
+        <p>Qidiruv maydoniga so'z yoki ibora yoziladi. Tizim darhol real-time tahlilni boshlaydi.</p>
+      </div>
+      <div class="how-step reveal">
+        <div class="step-num">02</div>
+        <h4>AI klassifikatsiyasi</h4>
+        <p>Neyron tarmoq so'rovni tahlil qilib, xavflilik darajasini 0–100 shkala bo'yicha baholaydi.</p>
+      </div>
+      <div class="how-step reveal">
+        <div class="step-num">03</div>
+        <h4>Filtr va bloklash</h4>
+        <p>Xavfli so'rovlar bloklanib, foydalanuvchiga ogohlantirish ko'rsatiladi. Ball kamayadi.</p>
+      </div>
+      <div class="how-step reveal">
+        <div class="step-num">04</div>
+        <h4>Xavfsiz natijalar</h4>
+        <p>Tekshirilgan va xavfsiz natijalar ko'rsatiladi. Har bir manba sertifikatlangan hisoblanadi.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- SCORING -->
+<section id="scoring" class="score-section">
+  <div class="score-wrap">
+    <div>
+      <div class="section-label">Ball tizimi</div>
+      <h2 class="section-title">Foydalanuvchi<br>Reytingi</h2>
+      <p class="section-desc" style="margin-bottom:2rem">Har bir foydalanuvchi xatti-harakati hisobga olinadi. Yaxshi odatlar — yuqori reyting. Xavfli urinishlar — ogohlantirish va ball kamayishi.</p>
+      <div class="score-tiers">
+        <div class="score-tier reveal">
+          <div class="tier-icon">🏆</div>
+          <div class="tier-body">
+            <h5>Oltin foydalanuvchi · 800–1000 ball</h5>
+            <p>Doimiy xavfsiz internet foydalanuvchisi. Qo'shimcha kontent imkoniyatlariga ega. Oilaviy rejimda "ishonchli" belgisi qo'yiladi.</p>
+          </div>
+        </div>
+        <div class="score-tier reveal">
+          <div class="tier-icon">⚡</div>
+          <div class="tier-body">
+            <h5>Standart foydalanuvchi · 500–799 ball</h5>
+            <p>Oddiy foydalanuvchi. Barcha asosiy funksiyalarga kirish mavjud. Ogohlantirishlar ko'rsatiladi.</p>
+          </div>
+        </div>
+        <div class="score-tier reveal">
+          <div class="tier-icon">⚠️</div>
+          <div class="tier-body">
+            <h5>Kuzatuv rejimi · 200–499 ball</h5>
+            <p>Shubhali faollik aniqlangan. Administrator va ota-onalarga xabar jo'natiladi. Cheklangan kirish.</p>
+          </div>
+        </div>
+        <div class="score-tier reveal">
+          <div class="tier-icon">🔒</div>
+          <div class="tier-body">
+            <h5>Bloklangan · 0–199 ball</h5>
+            <p>Tizim kirishni cheklaydi. Administrator tasdiqi va qayta o'qitish kursi talab etiladi.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div>
+      <div class="score-card reveal">
+        <div class="score-header">
+          <div class="score-title">Namunaviy foydalanuvchi profili</div>
+          <div class="score-badge sb-high">Oltin daraja</div>
+        </div>
+        <div class="score-big" style="color:var(--green)">847</div>
+        <div class="score-lbl">/ 1000 ball</div>
+        <div class="score-bar-wrap">
+          <div class="score-bar-label"><span>Xavfsiz qidiruvlar</span><span style="color:var(--green)">94%</span></div>
+          <div class="score-bar"><div class="score-bar-fill fill-green" style="width:94%"></div></div>
+        </div>
+        <div class="score-bar-wrap">
+          <div class="score-bar-label"><span>Bloklangan urinishlar</span><span style="color:var(--amber)">3%</span></div>
+          <div class="score-bar"><div class="score-bar-fill fill-amber" style="width:3%"></div></div>
+        </div>
+        <div class="score-bar-wrap">
+          <div class="score-bar-label"><span>Takroriy urinishlar</span><span style="color:var(--red)">3%</span></div>
+          <div class="score-bar"><div class="score-bar-fill fill-red" style="width:3%"></div></div>
+        </div>
+        <div style="margin-top:1.5rem;padding-top:1.2rem;border-top:0.5px solid var(--border)">
+          <div style="font-size:12px;color:var(--muted);margin-bottom:8px">So'nggi faollik</div>
+          <div style="font-size:13px;display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Wikipedia.org</span><span style="color:var(--green);font-size:12px">+5 ball</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Google Scholar</span><span style="color:var(--green);font-size:12px">+5 ball</span></div>
+            <div style="display:flex;justify-content:space-between"><span style="color:var(--muted)">Bloklangan sayt urinishi</span><span style="color:var(--red);font-size:12px">-20 ball</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- BLOCKED -->
+<section id="blocked">
+  <div class="blocked-wrap">
+    <div>
+      <div class="section-label">Himoya qalqoni</div>
+      <h2 class="section-title">Nima<br>bloklanadi?</h2>
+      <p class="section-desc" style="margin-bottom:1.5rem">SafeCom foydalanuvchini zararli kontent turlaridan himoya qiladi. Quyida bloklangan va ruxsat etilgan kontent turlari keltirilgan.</p>
+      <h4 style="font-size:13px;color:var(--red);margin-bottom:.8rem;font-weight:500">🚫 Bloklangan kategoriyalar</h4>
+      <div class="block-pills">
+        <div class="block-pill"><span class="bdot"></span>Pornografiya</div>
+        <div class="block-pill"><span class="bdot"></span>Onlayn kazino</div>
+        <div class="block-pill"><span class="bdot"></span>Sport stavkalari</div>
+        <div class="block-pill"><span class="bdot"></span>Kripto ruletkasi</div>
+        <div class="block-pill"><span class="bdot"></span>Zararli dasturlar</div>
+        <div class="block-pill"><span class="bdot"></span>Fishing saytlar</div>
+        <div class="block-pill"><span class="bdot"></span>18+ o'yinlar</div>
+        <div class="block-pill"><span class="bdot"></span>Dark web havolalar</div>
+      </div>
+      <h4 style="font-size:13px;color:var(--green);margin-top:1.5rem;margin-bottom:.8rem;font-weight:500">✓ Ruxsat etilgan kategoriyalar</h4>
+      <div class="block-pills">
+        <div class="block-pill safe-pill"><span class="gdot"></span>Ta'lim platformalari</div>
+        <div class="block-pill safe-pill"><span class="gdot"></span>Yangiliklar saytlari</div>
+        <div class="block-pill safe-pill"><span class="gdot"></span>Ilmiy maqolalar</div>
+        <div class="block-pill safe-pill"><span class="gdot"></span>Video darslar</div>
+        <div class="block-pill safe-pill"><span class="gdot"></span>Ijtimoiy tarmoqlar</div>
+        <div class="block-pill safe-pill"><span class="gdot"></span>Ish topish saytlari</div>
+      </div>
+    </div>
+    <div class="reveal" style="display:flex;align-items:center;justify-content:center;">
+      <div style="text-align:center">
+        <div style="font-size:8.5rem;line-height:1;margin-bottom:1.5rem;filter:drop-shadow(0 0 35px rgba(14,165,233,.45))">🛡️</div>
+        <div style="font-family:'Syne',sans-serif;font-weight:800;font-size:2rem;letter-spacing:-.02em;margin-bottom:.4rem">50,000+</div>
+        <div style="color:var(--muted);font-size:14px;margin-bottom:2rem">Bloklangan zararli domen</div>
+        <div style="display:flex;gap:2rem;justify-content:center">
+          <div style="text-align:center"><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.4rem;color:var(--red)">18+</div><div style="font-size:12px;color:var(--muted)">kontent turi</div></div>
+          <div style="width:.5px;background:var(--border)"></div>
+          <div style="text-align:center"><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.4rem;color:var(--amber)">7/24</div><div style="font-size:12px;color:var(--muted)">kuzatuv</div></div>
+          <div style="width:.5px;background:var(--border)"></div>
+          <div style="text-align:center"><div style="font-family:'Syne',sans-serif;font-weight:700;font-size:1.4rem;color:var(--green)">AI</div><div style="font-size:12px;color:var(--muted)">aniqlik</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- FINAL CTA -->
+<div style="text-align:center;padding:6rem 2rem;position:relative;z-index:1;">
+  <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:600px;height:350px;background:radial-gradient(ellipse,rgba(14,165,233,.17) 0%,transparent 65%);pointer-events:none;"></div>
+  <div style="position:relative;z-index:1;max-width:700px;margin:0 auto;">
+    <div class="section-label" style="text-align:center">Hoziroq boshlang</div>
+    <h2 style="font-family:'Syne',sans-serif;font-weight:800;font-size:clamp(2rem,4.5vw,3.4rem);letter-spacing:-.03em;line-height:1.1;margin-bottom:1rem;">Xavfsiz internetni<br>bugun boshlang</h2>
+    <p style="color:var(--muted);font-size:16px;max-width:460px;margin:0 auto 2.5rem;">SafeCom — oila, maktab va tashkilotlar uchun. Hoziroq to'liq saytimizga kiring.</p>
+    <a href="https://redornx0-dotcom.github.io/SafeNet-Ma-lumot/#features" target="_blank" class="btn-hero-big">
+      🌐 Bizning saytimiz <span class="arr">→</span>
+    </a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div>
+    <div class="footer-brand">🛡️ SafeCom</div>
+    <div class="footer-by">Yaratuvchi: <span>Apex IV</span></div>
+  </div>
+  <div style="font-size:12px;color:var(--muted)">© 2025 SafeCom · Barcha huquqlar himoyalangan</div>
+</footer>
+
+<script>
+// Particle background
+const canvas=document.getElementById('bg-canvas');
+const ctx=canvas.getContext('2d');
+let W,H;
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+const pts=Array.from({length:130},()=>({x:Math.random()*window.innerWidth,y:Math.random()*window.innerHeight,r:Math.random()*1.1+.3,vx:(Math.random()-.5)*.18,vy:(Math.random()-.5)*.18,a:Math.random()*.6+.1}));
+function draw(){
+  ctx.clearRect(0,0,W,H);
+  pts.forEach(p=>{
+    p.x+=p.vx;p.y+=p.vy;
+    if(p.x<0)p.x=W;if(p.x>W)p.x=0;
+    if(p.y<0)p.y=H;if(p.y>H)p.y=0;
+    ctx.beginPath();ctx.arc(p.x,p.y,p.r,0,Math.PI*2);
+    ctx.fillStyle=`rgba(56,189,248,${p.a*.45})`;ctx.fill();
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+
+// Scroll reveal
+const els=document.querySelectorAll('.reveal');
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');io.unobserve(e.target);}});
+},{threshold:.12});
+els.forEach(el=>io.observe(el));
+</script>
+</body>
+</html>
